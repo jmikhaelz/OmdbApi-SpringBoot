@@ -1,1 +1,3 @@
 spring.application.name=omdbapi-springboot
+omdbapi.url=http://www.omdbapi.com/
+omdbapi.key=${OMDB_API_KEY}
