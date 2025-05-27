@@ -1,0 +1,13 @@
+package mx.aluracursos.omdbapi_springboot;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class OmdbapiSpringbootApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(OmdbapiSpringbootApplication.class, args);
+	}
+
+}
