@@ -40,14 +40,3 @@ cd omdbapi-springboot
 └── README.md              # Este documento 📖
 
 ```
-
-## 🏗️ Tecnologías utilizadas
-Especifica las herramientas y frameworks que usaste, por ejemplo:
-
-Java 17
-
-Spring Boot
-
-Maven
-
-API de OMDB
