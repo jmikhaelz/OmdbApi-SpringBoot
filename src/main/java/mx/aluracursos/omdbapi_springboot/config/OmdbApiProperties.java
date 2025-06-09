@@ -1,9 +1,9 @@
 package mx.aluracursos.omdbapi_springboot.config;
 
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-@Configurable
+@Configuration
 @ConfigurationProperties(prefix = "omdbapi")
 public class OmdbApiProperties {
     private String url;
@@ -17,4 +17,11 @@ public class OmdbApiProperties {
         return key;
     }
 
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 }
