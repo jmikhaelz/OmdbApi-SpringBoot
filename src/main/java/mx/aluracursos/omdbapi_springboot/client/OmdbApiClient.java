@@ -19,7 +19,7 @@ public class OmdbApiClient {
                     .build();
             HttpResponse<String> response = client.send(request,
                     HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200 || response.body().contains("\"Response\":\"False\"")) {
+            if (response.statusCode() != 200) {
                 return null;
             }
             return response.body();
