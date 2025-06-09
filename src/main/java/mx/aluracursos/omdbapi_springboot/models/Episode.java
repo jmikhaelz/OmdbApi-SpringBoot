@@ -5,10 +5,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record Episode(
-        @JsonAlias("Title") String titulo,
-        @JsonAlias("Episode") String numero,
-        @JsonAlias("Season") String temporada,
-        @JsonAlias("imdbRating") String evaluacion,
-        @JsonAlias("Released") String lanzamiento
-) {
+                @JsonAlias("Title") String titulo,
+                @JsonAlias("Episode") String numero,
+                @JsonAlias("Season") String temporada,
+                @JsonAlias("imdbRating") String evaluacion,
+                @JsonAlias("Released") String lanzamiento) {
+
+        @Override
+        public String toString() {
+                return "Episodio #" + numero + "/" + temporada + " : " + titulo +
+                                "\n Lanzamiento : " + lanzamiento + " Evaluacion : "
+                                + evaluacion;
+        }
+
 }
