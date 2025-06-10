@@ -6,7 +6,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.DoubleSummaryStatistics;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -28,6 +30,7 @@ public class MenuInteractivo implements CommandLineRunner {
     private final static Scanner scanner = new Scanner(System.in);
     private static Serie serieCache;
     private static List<Season> seasonsCache = new ArrayList<>();
+    private static Map<Serie, List<Season>> historialConsultas = new HashMap<>();
     @Autowired
     private OmdbApiProperties omdbApiProperties = new OmdbApiProperties();
 
@@ -63,7 +66,8 @@ public class MenuInteractivo implements CommandLineRunner {
                 System.out.print("¿Quieres seguir con otra búsqueda? [Ingrese Y/ Si no de ENTER]: ");
                 var respuesta = scanner.nextLine().trim().toLowerCase();
                 if (!(respuesta.equals("y")))
-                    System.exit(0);;
+                    System.exit(0);
+                ;
 
             }
         }
@@ -80,6 +84,7 @@ public class MenuInteractivo implements CommandLineRunner {
         if (params.getEpisodio() != 0)
             urlApi.append("&Episode=").append(params.getEpisodio());
 
+        urlApi.append("&type=series");
         urlApi.append("&apikey=").append(omdbApiProperties.getKey());
         return URI.create(urlApi.toString());
     }
@@ -101,6 +106,7 @@ public class MenuInteractivo implements CommandLineRunner {
                         System.out.println("[Season " + i + "] Error de conseguir temporada : " + e.getMessage());
                     }
                 }
+                historialConsultas.put(serieCache, seasonsCache);
                 return true;
             }
             return false;
@@ -119,7 +125,8 @@ public class MenuInteractivo implements CommandLineRunner {
             System.out.println("3. Ranking de episodios");
             System.out.println("4. Buscar episodio por título");
             System.out.println("5. Estadísticas de la serie");
-            System.out.println("6. Salir");
+            System.out.println("6. Historial de Busquedas");
+            System.out.println("7. Salir");
             System.out.print("Seleccione una opción: ");
 
             opcion = scanner.nextInt();
@@ -142,12 +149,15 @@ public class MenuInteractivo implements CommandLineRunner {
                     estadisticasSerie();
                     break;
                 case 6:
+                    historialBusqueda();
+                    break;
+                case 7:
                     System.out.println("🚀 Saliendo del programa...");
                     break;
                 default:
                     System.out.println("❌ Opción inválida, intenta nuevamente.");
             }
-        } while (opcion != 6);
+        } while (opcion != 7);
     }
 
     private static void mostrarInformacion() {
@@ -221,6 +231,13 @@ public class MenuInteractivo implements CommandLineRunner {
                                 ep.evaluacion(),
                                 ep.lanzamiento())))
                 .collect(Collectors.toList());
+    }
+
+    private static void historialBusqueda() {
+        System.out.println("\t Hisotrial de Series Consultadas");
+        for (Serie serie : historialConsultas.keySet()) {
+            System.out.println(serie);
+        }
     }
 
 }
