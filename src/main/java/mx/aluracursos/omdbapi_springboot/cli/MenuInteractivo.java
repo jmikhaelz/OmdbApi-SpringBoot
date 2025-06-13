@@ -23,6 +23,7 @@ import mx.aluracursos.omdbapi_springboot.config.OmdbApiProperties;
 import mx.aluracursos.omdbapi_springboot.models.Episode;
 import mx.aluracursos.omdbapi_springboot.models.Season;
 import mx.aluracursos.omdbapi_springboot.models.Serie;
+import mx.aluracursos.omdbapi_springboot.models.SerieClass;
 import mx.aluracursos.omdbapi_springboot.service.OmdbApiService;
 
 @Component
@@ -235,9 +236,23 @@ public class MenuInteractivo implements CommandLineRunner {
 
     private static void historialBusqueda() {
         System.out.println("\t Hisotrial de Series Consultadas");
-        for (Serie serie : historialConsultas.keySet()) {
-            System.out.println(serie);
-        }
+
+        /*
+         * Maneras de imprimir informacion
+         * Directo por el map
+         * for (Serie serie : historialConsultas.keySet()) {
+         * System.out.println(serie);
+         * }
+         * por orden de genero
+         */
+        List<SerieClass> listHistorial = historialConsultas
+                .keySet()
+                .stream()
+                .map(serie -> new SerieClass(serie))
+                .collect(Collectors.toList());
+
+        listHistorial.stream()
+                .sorted(Comparator.comparing(SerieClass::getGenero));
     }
 
 }
