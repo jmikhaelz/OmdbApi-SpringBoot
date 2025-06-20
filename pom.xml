@@ -30,6 +30,7 @@
 	<properties>
 		<java.version>17</java.version>
 		<jackson.version>2.19.0</jackson.version>
+		<genai.version>1.3.0</genai.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -54,8 +55,12 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.genai</groupId>
+			<artifactId>google-genai</artifactId>
+			<version>${genai.version}</version>
+		</dependency>
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
