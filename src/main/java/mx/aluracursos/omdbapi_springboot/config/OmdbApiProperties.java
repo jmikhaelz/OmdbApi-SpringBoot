@@ -1,9 +1,9 @@
 package mx.aluracursos.omdbapi_springboot.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 @ConfigurationProperties(prefix = "omdbapi")
 public class OmdbApiProperties {
     private String url;

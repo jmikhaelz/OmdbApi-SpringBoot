@@ -2,6 +2,9 @@ package mx.aluracursos.omdbapi_springboot.models;
 
 import java.util.OptionalDouble;
 
+import mx.aluracursos.omdbapi_springboot.client.GeminiApiClient;
+import mx.aluracursos.omdbapi_springboot.config.GeminiApiProperties;
+
 public class SerieClass {
 
     private String titulo;
@@ -13,7 +16,7 @@ public class SerieClass {
     private String actores;
     private String sinopsis;
 
-    public SerieClass(Serie serieCache) {
+    public SerieClass(Serie serieCache, GeminiApiProperties geminiApiProperties) {
         this.titulo = serieCache.titulo();
         this.totalTemporadas = serieCache.totalTemporadas();
         this.evaluacion = OptionalDouble.of(Double.valueOf(serieCache.evaluacion())).orElse(0);
@@ -21,7 +24,8 @@ public class SerieClass {
         this.poster = serieCache.poster();
         this.genero = Categoria.fromString(serieCache.genero().split(",")[0].trim());
         this.actores = serieCache.actores();
-        this.sinopsis = serieCache.sinopsis();
+        this.sinopsis = GeminiApiClient.getTranslate(serieCache.sinopsis(), "spanish",
+                geminiApiProperties.getKey());
     }
 
     public String getTitulo() {

@@ -1,8 +1,11 @@
 package mx.aluracursos.omdbapi_springboot.service;
 
+import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Service
 public class OmdbApiService {
     private ObjectMapper objectMapper = new ObjectMapper();
 
