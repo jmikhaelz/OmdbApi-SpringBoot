@@ -2,16 +2,30 @@ package mx.aluracursos.omdbapi_springboot.models;
 
 import java.util.OptionalDouble;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import mx.aluracursos.omdbapi_springboot.client.GeminiApiClient;
 import mx.aluracursos.omdbapi_springboot.config.GeminiApiProperties;
 
+@Entity
+@Table(name = "series")
 public class SerieClass {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long Id;
+    @Column(unique = true)
     private String titulo;
     private Integer totalTemporadas;
     private Double evaluacion;
     private String lanzamiento;
     private String poster;
+    @Enumerated(EnumType.STRING)
     private Categoria genero;
     private String actores;
     private String sinopsis;
@@ -102,6 +116,14 @@ public class SerieClass {
                 + "\n Genero :" + genero
                 + ", Reparto : " + actores
                 + "\n [<>] Sinopsis: \n\t" + sinopsis;
+    }
+
+    public Long getId() {
+        return Id;
+    }
+
+    public void setId(Long id) {
+        Id = id;
     }
 
 }
