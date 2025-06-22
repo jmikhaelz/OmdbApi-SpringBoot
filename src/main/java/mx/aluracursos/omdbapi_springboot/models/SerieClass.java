@@ -1,5 +1,6 @@
 package mx.aluracursos.omdbapi_springboot.models;
 
+import java.util.List;
 import java.util.OptionalDouble;
 
 import jakarta.persistence.Column;
@@ -10,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import mx.aluracursos.omdbapi_springboot.client.GeminiApiClient;
 import mx.aluracursos.omdbapi_springboot.config.GeminiApiProperties;
 
@@ -29,6 +31,11 @@ public class SerieClass {
     private Categoria genero;
     private String actores;
     private String sinopsis;
+    @Transient
+    private List<EpisodeClass> episodios;
+
+    public SerieClass() {
+    }
 
     public SerieClass(Serie serieCache, GeminiApiProperties geminiApiProperties) {
         this.titulo = serieCache.titulo();
