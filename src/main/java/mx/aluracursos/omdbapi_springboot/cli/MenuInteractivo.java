@@ -22,6 +22,7 @@ import mx.aluracursos.omdbapi_springboot.models.Episode;
 import mx.aluracursos.omdbapi_springboot.models.Season;
 import mx.aluracursos.omdbapi_springboot.models.Serie;
 import mx.aluracursos.omdbapi_springboot.models.SerieClass;
+import mx.aluracursos.omdbapi_springboot.repository.SerieRepository;
 import mx.aluracursos.omdbapi_springboot.service.OmdbApiService;
 
 @Component
@@ -34,6 +35,8 @@ public class MenuInteractivo implements CommandLineRunner {
     OmdbApiProperties omdbApiProperties = new OmdbApiProperties();
     @Autowired
     GeminiApiProperties geminiApiProperties = new GeminiApiProperties();
+    @Autowired
+    private SerieRepository repository;
 
     @Override
     public void run(String... args) {
@@ -92,6 +95,7 @@ public class MenuInteractivo implements CommandLineRunner {
                         System.out.println("[Season " + i + "] Error de conseguir temporada : " + e.getMessage());
                     }
                 }
+                repository.save(new SerieClass(serieCache, geminiApiProperties));
                 historialConsultas.put(serieCache, seasonsCache);
                 return true;
             }
@@ -221,18 +225,22 @@ public class MenuInteractivo implements CommandLineRunner {
 
     private void historialBusqueda() {
         /*
-         * Maneras de imprimir informacion
+         * Maneras de imprimir informacion manual
          * Directo por el map
          * for (Serie serie : historialConsultas.keySet()) {
          * System.out.println(serie);
          * }
          * por orden de genero
+         * 
+         * List<SerieClass> listHistorial = historialConsultas
+         * .keySet()
+         * .stream()
+         * .map(serie -> new SerieClass(serie, geminiApiProperties))
+         * .collect(Collectors.toList());
          */
-        List<SerieClass> listHistorial = historialConsultas
-                .keySet()
-                .stream()
-                .map(serie -> new SerieClass(serie, geminiApiProperties))
-                .collect(Collectors.toList());
+
+        List<SerieClass> listHistorial = repository.findAll();
+
         BarraCargaUtil.mostrarBarraCarga(30, 100);
         System.out.println("\t Hisotrial de Series Consultadas");
 
