@@ -3,6 +3,7 @@ package mx.aluracursos.omdbapi_springboot.models;
 import java.util.List;
 import java.util.OptionalDouble;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,8 +11,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import mx.aluracursos.omdbapi_springboot.client.GeminiApiClient;
 import mx.aluracursos.omdbapi_springboot.config.GeminiApiProperties;
 
@@ -31,7 +32,7 @@ public class SerieClass {
     private Categoria genero;
     private String actores;
     private String sinopsis;
-    @Transient
+    @OneToMany(mappedBy = "serie", cascade = CascadeType.ALL)
     private List<EpisodeClass> episodios;
 
     public SerieClass() {
@@ -131,6 +132,15 @@ public class SerieClass {
 
     public void setId(Long id) {
         Id = id;
+    }
+
+    public List<EpisodeClass> getEpisodios() {
+        return episodios;
+    }
+
+    public void setEpisodios(List<EpisodeClass> episodios) {
+        episodios.forEach(e -> e.setSerie(this));
+        this.episodios = episodios;
     }
 
 }

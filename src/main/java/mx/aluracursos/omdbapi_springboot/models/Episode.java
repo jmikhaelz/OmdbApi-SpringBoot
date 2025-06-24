@@ -13,7 +13,7 @@ public record Episode(
 
         @Override
         public String toString() {
-                return "Episodio #" + numero + "/" + temporada + " : " + titulo +
+                return "Episodio #" + numero + " : " + titulo +
                                 "\n Lanzamiento : " + lanzamiento + " Evaluacion : "
                                 + evaluacion;
         }
