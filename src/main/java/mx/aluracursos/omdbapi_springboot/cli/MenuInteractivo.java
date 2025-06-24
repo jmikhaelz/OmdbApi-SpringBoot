@@ -15,6 +15,7 @@ import mx.aluracursos.omdbapi_springboot.client.OmdbApiClient;
 import mx.aluracursos.omdbapi_springboot.client.OmdbQueryParams;
 import mx.aluracursos.omdbapi_springboot.config.GeminiApiProperties;
 import mx.aluracursos.omdbapi_springboot.config.OmdbApiProperties;
+import mx.aluracursos.omdbapi_springboot.models.Categoria;
 import mx.aluracursos.omdbapi_springboot.models.EpisodeClass;
 import mx.aluracursos.omdbapi_springboot.models.Season;
 import mx.aluracursos.omdbapi_springboot.models.Serie;
@@ -46,11 +47,11 @@ public class MenuInteractivo implements CommandLineRunner {
         int opcion;
         do {
             System.out.println("\n|\t\t SERIE PLANET \t\t|");
-            System.out.println("1. Buscar serie ");
+            System.out.println("1. Buscar serie por OmdbApi");
             System.out.println("2. Consultar temporadas y episodios");
-            System.out.println("3. Consultar Ranking de episodios");
-            System.out.println("4. Buscar episodio por título");
-            System.out.println("5. Consultar estadisticas de la serie");
+            System.out.println("3. Consultar serie de DB");
+            System.out.println("4. Ranking de series");
+            System.out.println("5. Buscar series por categoria");
             System.out.println("6. Historial de Busquedas");
             System.out.println("7. Salir");
             System.out.print("Seleccione una opción: ");
@@ -66,10 +67,13 @@ public class MenuInteractivo implements CommandLineRunner {
                     mostrarTemporadasYEpisodios();
                     break;
                 case 3:
+                    consultarSerie();
                     break;
                 case 4:
+                    topSeries();
                     break;
                 case 5:
+                    buscarPorCategoria();
                     break;
                 case 6:
                     historialBusqueda();
@@ -83,6 +87,44 @@ public class MenuInteractivo implements CommandLineRunner {
                 default:
             }
         } while (opcion != 7);
+    }
+
+    public void filtrarSeriesPorTemporadaYEvaluacion() {
+        System.out.println("¿Filtrar séries con cuántas temporadas? ");
+        var totalTemporadas = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("¿Com evaluación apartir de cuál valor? ");
+        var evaluacion = scanner.nextDouble();
+        scanner.nextLine();
+        List<SerieClass> filtroSeries = repository
+                .findByTotalTemporadasLessThanEqualAndEvaluacionGreaterThanEqual(totalTemporadas, evaluacion);
+        System.out.println("*** Series filtradas ***");
+        filtroSeries.forEach(s -> System.out.println(s.getTitulo() + "  - evaluacion: " + s.getEvaluacion()));
+    }
+
+    private void buscarPorCategoria() {
+        System.out.println("Ingrese el nombre de la categoria/genro de la serie que quieres buscar: ");
+        var entrada = scanner.nextLine();
+        var categoria = Categoria.fromSpanish(entrada);
+        List<SerieClass> seriesPorCategoria = repository.findByGenero(categoria);
+        System.out.println("Series que son " + entrada);
+        seriesPorCategoria.forEach(s -> System.out.println("* " + s.getTitulo() + " - " + s.getLanzamiento()));
+    }
+
+    private void topSeries() {
+        System.out.println("\n\t|<>| Ranking de Series");
+        List<SerieClass> tops = repository.findTop5ByOrderByEvaluacionDesc();
+        tops.forEach(s -> System.out.println("* " + s.getTitulo() + " Eval." + s.getEvaluacion()));
+    }
+
+    private void consultarSerie() {
+        System.out.println("Ingrese el nombre de la serie que quieres buscar: ");
+        var nombreSerie = scanner.nextLine();
+        Optional<SerieClass> serieBuscada = repository.findByTituloContainsIgnoreCase(nombreSerie);
+        if (serieBuscada.isPresent())
+            System.out.println("Serie Encontrada : \n\t" + serieBuscada.get());
+        else
+            System.out.println("La serie " + nombreSerie + " no existente en DB");
     }
 
     private void mostrarTemporadasYEpisodios() {
