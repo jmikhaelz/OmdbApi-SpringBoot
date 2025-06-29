@@ -28,7 +28,7 @@ public class MenuInteractivo implements CommandLineRunner {
     // VARIABLE LOCALES
     private final static Scanner scanner = new Scanner(System.in);
     private List<SerieClass> listHistorial;
-
+    private Optional<SerieClass> serieBuscada;
     // VARIABLES DE PROPIEDADES
     @Autowired
     private OmdbApiProperties omdbApiProperties = new OmdbApiProperties();
@@ -57,6 +57,7 @@ public class MenuInteractivo implements CommandLineRunner {
             System.out.println("7. Filtrar por temporada y evaluacion");
             System.out.println("8. Ver series recomendadas");
             System.out.println("9. Buscar episodio por nombre");
+            System.out.println("10. Top Episodios por Serie");
             System.out.print("Seleccione una opción: ");
 
             opcion = scanner.nextInt();
@@ -90,6 +91,9 @@ public class MenuInteractivo implements CommandLineRunner {
                 case 9:
                     buscarEpisodioPorTitulo();
                     break;
+                case 10:
+                    topEpisodios();
+                    break;
                 case 0:
                     System.out.print("¿Seguro que quieres salir? [Ingrese Y/ Si no de ENTER]: ");
                     String respuesta = scanner.nextLine().trim().toLowerCase();
@@ -101,13 +105,25 @@ public class MenuInteractivo implements CommandLineRunner {
         } while (opcion != 0);
     }
 
+    private void topEpisodios() {
+        consultarSerie();
+        if (serieBuscada.isPresent()) {
+            SerieClass resp = serieBuscada.get();
+            List<EpisodeClass> tops = repository.top5Episodios(resp);
+            System.out.println("\n>>Top 5 Episodios de la Serie " + resp.getTitulo() + "<<");
+            tops.forEach(e -> System.out.println("\n\t Temp: " + e.getTemporada() + " - Ep: " + e.getNumero()
+                    + " - Titulo: " + e.getTitulo() + " -  Evaluacion: " + e.getEvaluacion()));
+        }
+    }
+
     private void buscarEpisodioPorTitulo() {
         System.out.println(" Ingrese el nombre del episodio: ");
         var nombreS = scanner.nextLine();
         List<EpisodeClass> resp = repository.episodiosPorNombre(nombreS);
 
-        resp.forEach(e -> System.out.printf("\n\tSerie: %s - Temp: %s - Ep: %s - Evaluacion: %s", e.getSerie().getTitulo(),
-                e.getTemporada(), e.getNumero(), e.getEvaluacion()));
+        resp.forEach(
+                e -> System.out.printf("\n\tSerie: %s - Temp: %s - Ep: %s - Evaluacion: %s", e.getSerie().getTitulo(),
+                        e.getTemporada(), e.getNumero(), e.getEvaluacion()));
     }
 
     private void verSeriesPromedios() {
@@ -137,7 +153,7 @@ public class MenuInteractivo implements CommandLineRunner {
     }
 
     private void buscarPorCategoria() {
-        System.out.println("Ingrese el nombre de la categoria/genro de la serie que quieres buscar: ");
+        System.out.println("Ingrese el nombre de la categoria/genero de la serie que quieres buscar: ");
         var entrada = scanner.nextLine();
         var categoria = Categoria.fromSpanish(entrada);
         List<SerieClass> seriesPorCategoria = repository.findByGenero(categoria);
@@ -154,7 +170,7 @@ public class MenuInteractivo implements CommandLineRunner {
     private void consultarSerie() {
         System.out.println("Ingrese el nombre de la serie que quieres buscar: ");
         var nombreSerie = scanner.nextLine();
-        Optional<SerieClass> serieBuscada = repository.findByTituloContainsIgnoreCase(nombreSerie);
+        serieBuscada = repository.findByTituloContainsIgnoreCase(nombreSerie);
         if (serieBuscada.isPresent())
             System.out.println("Serie Encontrada : \n\t" + serieBuscada.get());
         else
