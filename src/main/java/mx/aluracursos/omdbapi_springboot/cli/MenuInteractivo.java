@@ -47,13 +47,16 @@ public class MenuInteractivo implements CommandLineRunner {
         int opcion;
         do {
             System.out.println("\n|\t\t SERIE PLANET \t\t|");
+            System.out.println("0. Salir");
             System.out.println("1. Buscar serie por OmdbApi");
             System.out.println("2. Consultar temporadas y episodios");
             System.out.println("3. Consultar serie de DB");
             System.out.println("4. Ranking de series");
             System.out.println("5. Buscar series por categoria");
             System.out.println("6. Historial de Busquedas");
-            System.out.println("7. Salir");
+            System.out.println("7. Filtrar por temporada y evaluacion");
+            System.out.println("8. Ver series recomendadas");
+            System.out.println("9. Buscar episodio por nombre");
             System.out.print("Seleccione una opción: ");
 
             opcion = scanner.nextInt();
@@ -79,14 +82,39 @@ public class MenuInteractivo implements CommandLineRunner {
                     historialBusqueda();
                     break;
                 case 7:
+                    filtrarSeriesPorTemporadaYEvaluacion();
+                    break;
+                case 8:
+                    verSeriesPromedios();
+                    break;
+                case 9:
+                    buscarEpisodioPorTitulo();
+                    break;
+                case 0:
                     System.out.print("¿Seguro que quieres salir? [Ingrese Y/ Si no de ENTER]: ");
                     String respuesta = scanner.nextLine().trim().toLowerCase();
                     if (!(respuesta.equals("y")))
-                        opcion = 0;
+                        opcion = -1;
                     break;
                 default:
             }
-        } while (opcion != 7);
+        } while (opcion != 0);
+    }
+
+    private void buscarEpisodioPorTitulo() {
+        System.out.println(" Ingrese el nombre del episodio: ");
+        var nombreS = scanner.nextLine();
+        List<EpisodeClass> resp = repository.episodiosPorNombre(nombreS);
+
+        resp.forEach(e -> System.out.printf("Serie: %s - Temp: %s - Ep: %s - Evaluacion: %s", e.getSerie().getTitulo(),
+                e.getTemporada(), e.getNumero(), e.getEvaluacion()));
+    }
+
+    private void verSeriesPromedios() {
+        System.out.println("\n\t>>SERIES RECOMENDADAS<<");
+        List<SerieClass> resp = repository.seriesPorTempYEvalPromedio();
+        resp.forEach(s -> System.out
+                .println(s.getTitulo() + " - Temp: " + s.getTotalTemporadas() + " - evaluacion: " + s.getEvaluacion()));
     }
 
     public void filtrarSeriesPorTemporadaYEvaluacion() {
@@ -96,8 +124,14 @@ public class MenuInteractivo implements CommandLineRunner {
         System.out.println("¿Com evaluación apartir de cuál valor? ");
         var evaluacion = scanner.nextDouble();
         scanner.nextLine();
-        List<SerieClass> filtroSeries = repository
-                .findByTotalTemporadasLessThanEqualAndEvaluacionGreaterThanEqual(totalTemporadas, evaluacion);
+        /*
+         * List<SerieClass> filtroSeries = repository
+         * .findByTotalTemporadasLessThanEqualAndEvaluacionGreaterThanEqual(
+         * totalTemporadas, evaluacion);
+         */
+
+        List<SerieClass> filtroSeries = repository.seriesPorTempYEvalPromedioUser(totalTemporadas, evaluacion);
+
         System.out.println("*** Series filtradas ***");
         filtroSeries.forEach(s -> System.out.println(s.getTitulo() + "  - evaluacion: " + s.getEvaluacion()));
     }
