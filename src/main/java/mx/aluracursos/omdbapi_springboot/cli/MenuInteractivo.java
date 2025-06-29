@@ -106,7 +106,7 @@ public class MenuInteractivo implements CommandLineRunner {
         var nombreS = scanner.nextLine();
         List<EpisodeClass> resp = repository.episodiosPorNombre(nombreS);
 
-        resp.forEach(e -> System.out.printf("Serie: %s - Temp: %s - Ep: %s - Evaluacion: %s", e.getSerie().getTitulo(),
+        resp.forEach(e -> System.out.printf("\n\tSerie: %s - Temp: %s - Ep: %s - Evaluacion: %s", e.getSerie().getTitulo(),
                 e.getTemporada(), e.getNumero(), e.getEvaluacion()));
     }
 
